@@ -1,0 +1,2 @@
+class config:
+    appname = 'app'
