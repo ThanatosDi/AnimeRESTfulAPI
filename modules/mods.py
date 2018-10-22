@@ -26,7 +26,6 @@ class website:
                 htmlcode = BeautifulSoup(html, "html.parser")
                 return htmlcode
         """
-
     @staticmethod
     def tr(url):
         htmlcode = website.html(url)
@@ -47,6 +46,12 @@ class website:
         for tr in tr_list:
             magnet_list.append((tr.find('a',{'class':'download-arrow arrow-magnet'})['href']))
         return magnet_list
+
+
+class dmhy:
+    @staticmethod
+    def animesearch(keyword=None,team_id=None):
+        return website.tr(f'https://share.dmhy.org/topics/list?keyword={keyword}&sort_id=2&team_id={team_id}&order=date-desc')
 
 
 class log:
