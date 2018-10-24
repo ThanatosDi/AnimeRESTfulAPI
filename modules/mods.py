@@ -107,9 +107,13 @@ class dmhy:
         """
         try:
             fansublist = (((website.html('https://share.dmhy.org/topics/advanced-search?team_id=0&sort_id=0&orderby=')).find('select',{'id':'AdvSearchTeam'})).find_all('option'))
-            fansubs = {}
+            fansubs = []
             for fansub in fansublist:
-                fansubs[fansub.text] = fansub['value']
+                fansubsdict = {}
+                fansubsdict['Fansub'] = fansub.text
+                fansubsdict['ID'] = fansub['value']
+                fansubs.append(fansubsdict)
+            del fansubs[0]
             return fansubs
         except Exception as e:
             log.write(f'>> dmhy.fansub : {str(e)}')
