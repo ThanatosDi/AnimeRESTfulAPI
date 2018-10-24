@@ -46,7 +46,10 @@ class website:
         try:
             teamname_list = []
             for tr in tr_list:
-                teamname_list.append(((tr.find('span',{'class':'tag'})).text).replace('\n\n\t\t\t\t',''))
+                if (tr.find('span',{'class':'tag'})):
+                    teamname_list.append(((tr.find('span',{'class':'tag'})).text).replace('\n\n\t\t\t\t',''))
+                else:
+                    teamname_list.append('')
             return teamname_list
         except Exception as e:
             log.write(f'>> website.teamname : {str(e)}')
@@ -56,7 +59,11 @@ class website:
         try:
             teamid_list = []
             for tr in tr_list:
-                teamid_list.append((re.findall(r'team_id/\d+',str(tr))[0]).split('/')[1])
+                if re.findall(r'team_id/\d+',str(tr)):
+                    id = (re.findall(r'team_id/\d+',str(tr))[0]).split('/')[1]
+                else:
+                    id = ''
+                teamid_list.append(id)
             return teamid_list
         except Exception as e:
             log.write(f'>> website.teamid : {str(e)}')
