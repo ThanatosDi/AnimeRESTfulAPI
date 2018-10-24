@@ -14,21 +14,25 @@ app = Flask(__name__)
 def home():
     return http.status({'status': 200, 'message': 'Welcome to dmhy RESTful API.', 'version': '1.0'}, 200)
     #return http.status(anime, 200)
-
-@app.route(f'/v{api.version}/list', defaults={'anime_title': None})
+#/
+@app.route(f'/v{api.version}/list/', defaults={'anime_title': '','page':'1','lang':'tc','episode':''})
 @app.route(f"/v{api.version}/list/<string:anime_title>")
-def anime_search(anime_title='',team_id='',page=1,lang='',episode=''):
+@app.route(f"/v{api.version}/list/p<int:page>")
+@app.route(f"/v{api.version}/list/<string:lang>")
+@app.route(f"/v{api.version}/list/<string:anime_title>/p<int:page>")
+@app.route(f"/v{api.version}/list/<string:anime_title>/<string:lang>")
+@app.route(f"/v{api.version}/list/<string:anime_title>/<string:lang>/p<int:page>")
+@app.route(f"/v{api.version}/list/<string:lang>/p<int:page>")
+@app.route(f"/v{api.version}/list/<string:anime_title>/ep<int:episode>")
+@app.route(f"/v{api.version}/list/<string:anime_title>/<string:lang>/ep<int:episode>")
+def anime_search(anime_title='', team_id='', page=1, lang='', episode=''):
     """ search anime """
     try:
-        if request.args.get('page'):
-            page = request.args.get('page')
-        if request.args.get('lang'):
-            lang = request.args.get('lang')
-        if request.args.get('team'):
-            team_id = request.args.get('team')
-        if request.args.get('ep'):
-            episode = request.args.get('ep')
-        tr_list = dmhy.animesearch(anime_title,team_id,page,lang,episode)
+        if lang=='tc':
+            lang = '繁體'
+        elif lang=='sc':
+            lang = '简体'
+        tr_list = dmhy.animesearch(anime_title,team_id,page,lang,'{:0>2d}'.format(episode))
         title_list = website.title(tr_list)
         magnet_list = website.magnet(tr_list)
         teamid_list = website.teamid(tr_list)
