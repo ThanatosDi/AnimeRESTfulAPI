@@ -47,7 +47,6 @@ def anime_search(anime_title='', team_id='', page=1, lang='', episode=''):
         teamid_list = dmhy.teamid(tr_list)
         teamname_list = dmhy.teamname(tr_list)
         postid_list = dmhy.postid(tr_list)
-        dmhy.fansub()
         anime = []
         for index in range(len(tr_list)):
             animedict = {}
