@@ -1,0 +1,1 @@
+screen -d -m -S dmhy /home/dmhy/dmhy.sh

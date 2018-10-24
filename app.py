@@ -52,8 +52,6 @@ def anime_search(anime_title='',team_id='',page=1,lang='',episode=''):
 def anime_detail(anime_title='',team_id='',page=1,lang='',episode=''):
     """ show anime detail """
     try:
-        if anime_title==None or team_id==None or episode==None:
-            return http.internal_server_error('缺少必要參數，需要 team,ep')
         if request.args.get('page'):
             page = request.args.get('page')
         if request.args.get('lang'):
@@ -62,6 +60,8 @@ def anime_detail(anime_title='',team_id='',page=1,lang='',episode=''):
             team_id = request.args.get('team')
         if request.args.get('ep'):
             episode = request.args.get('ep')
+        if anime_title=='' or team_id=='' or episode=='':
+            return http.internal_server_error('缺少必要參數，需要 team,ep')
         tr_list = dmhy.animesearch(anime_title,team_id,page,lang,episode)
         title_list = website.title(tr_list)
         magnet_list = website.magnet(tr_list)
