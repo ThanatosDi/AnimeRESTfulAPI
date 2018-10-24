@@ -42,19 +42,12 @@ def anime_search(anime_title='', team_id='', page=1, lang='', episode=''):
         if episode:
             episode = '{:0>2d}'.format(episode)
         tr_list = dmhy.animesearch(anime_title,team_id,page,lang,episode)
-<<<<<<< HEAD
         title_list = dmhy.title(tr_list)
         magnet_list = dmhy.magnet(tr_list)
         teamid_list = dmhy.teamid(tr_list)
         teamname_list = dmhy.teamname(tr_list)
         postid_list = dmhy.postid(tr_list)
         dmhy.fansub()
-=======
-        title_list = website.title(tr_list)
-        magnet_list = website.magnet(tr_list)
-        teamid_list = website.teamid(tr_list)
-        teamname_list = website.teamname(tr_list)
->>>>>>> dd0e9cc86f0ae7c65523e58dfb7baa9292d3aad8
         anime = []
         for index in range(len(tr_list)):
             animedict = {}
