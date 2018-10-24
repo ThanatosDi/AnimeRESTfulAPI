@@ -32,7 +32,9 @@ def anime_search(anime_title='', team_id='', page=1, lang='', episode=''):
             lang = '繁體'
         elif lang=='sc':
             lang = '简体'
-        tr_list = dmhy.animesearch(anime_title,team_id,page,lang,'{:0>2d}'.format(episode))
+        if episode:
+            episode = '{:0>2d}'.format(episode)
+        tr_list = dmhy.animesearch(anime_title,team_id,page,lang,episode)
         title_list = website.title(tr_list)
         magnet_list = website.magnet(tr_list)
         teamid_list = website.teamid(tr_list)
