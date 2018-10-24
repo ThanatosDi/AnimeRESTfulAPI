@@ -74,14 +74,14 @@ class website:
 
 class dmhy:
     @staticmethod
-    def animesearch(keyword=None,team_id=None,page=1,lang=None):
+    def animesearch(keyword=None,team_id=None,page=1,lang=None,episode=None):
         """
         # Search anime from dmhy
-        # dmhy.animesearch(keyword=None,team_id=None,page=1)
+        # dmhy.animesearch(keyword=None,team_id=None,page=1,lang=None,ep=None)
         """
         try:
-            print(f'https://share.dmhy.org/topics/list/page/{page}?keyword={keyword}+{lang}&sort_id=2&team_id={team_id}&order=date-desc')
-            return website.tr(f'https://share.dmhy.org/topics/list/page/{page}?keyword={keyword}+{lang}&sort_id=2&team_id={team_id}&order=date-desc')
+            print(f'https://share.dmhy.org/topics/list/page/{page}?keyword={keyword}+{lang}+{episode}&sort_id=2&team_id={team_id}&order=date-desc')
+            return website.tr(f'https://share.dmhy.org/topics/list/page/{page}?keyword={keyword}+{lang}+{episode}&sort_id=2&team_id={team_id}&order=date-desc')
         except Exception as e:
             return log.write(f'>> dmhy.animesearch : {str(e)}')
 
