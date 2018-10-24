@@ -1,11 +1,12 @@
 import asyncio
+import json
 import re
 import time
 
 import aiohttp
 import requests
 from bs4 import BeautifulSoup
-from flask import jsonify, make_response, request
+from flask import Response, jsonify, make_response, request
 
 from config import *
 
@@ -31,6 +32,18 @@ class website:
         except Exception as e:
             log.write(f'>> website.tr : {str(e)}')
 
+class dmhy:
+    @staticmethod
+    def animesearch(keyword=None,team_id=None,page=1,lang=None,episode=None):
+        """
+        # Search anime from dmhy
+        # dmhy.animesearch(keyword=None,team_id=None,page=1,lang=None,ep=None)
+        """
+        try:
+            print(f'https://share.dmhy.org/topics/list/page/{page}?keyword={keyword}+{lang}+{episode}&sort_id=2&team_id={team_id}&order=date-desc')
+            return website.tr(f'https://share.dmhy.org/topics/list/page/{page}?keyword={keyword}+{lang}+{episode}&sort_id=2&team_id={team_id}&order=date-desc')
+        except Exception as e:
+            return log.write(f'>> dmhy.animesearch : {str(e)}')
     @staticmethod
     def title(tr_list):
         try:
@@ -78,19 +91,29 @@ class website:
         except Exception as e:
             log.write(f'>> website.magnet : {str(e)}')
 
-
-class dmhy:
     @staticmethod
-    def animesearch(keyword=None,team_id=None,page=1,lang=None,episode=None):
+    def postid(tr_list):
+        try:
+            postid_list = []
+            for tr in tr_list:
+                postid_list.append((re.findall(r'view/\d+',str(tr))[0]).split('/')[1])
+            return postid_list
+        except Exception as e:
+            log.write(f'>> website.postid : {str(e)}')
+    @staticmethod
+    def fansub():
         """
-        # Search anime from dmhy
-        # dmhy.animesearch(keyword=None,team_id=None,page=1,lang=None,ep=None)
+        # show all fansub on dmhy
         """
         try:
-            print(f'https://share.dmhy.org/topics/list/page/{page}?keyword={keyword}+{lang}+{episode}&sort_id=2&team_id={team_id}&order=date-desc')
-            return website.tr(f'https://share.dmhy.org/topics/list/page/{page}?keyword={keyword}+{lang}+{episode}&sort_id=2&team_id={team_id}&order=date-desc')
+            fansublist = (((website.html('https://share.dmhy.org/topics/advanced-search?team_id=0&sort_id=0&orderby=')).find('select',{'id':'AdvSearchTeam'})).find_all('option'))
+            fansubs = {}
+            for fansub in fansublist:
+                fansubs[fansub.text] = fansub['value']
+            return fansubs
         except Exception as e:
-            return log.write(f'>> dmhy.animesearch : {str(e)}')
+            log.write(f'>> dmhy.fansub : {str(e)}')
+
 
 class log:
     @staticmethod
@@ -105,9 +128,13 @@ class log:
 
 class http:
     @staticmethod
-    def status(message, status_code):
+    def sortstatus(obj, status_code):
         http.req(status_code)
-        return make_response(jsonify(message), status_code)
+        return make_response(jsonify(obj), status_code)
+    
+    def status(obj, status_code):
+        http.req(status_code)
+        return Response(json.dumps(obj, ensure_ascii=False).encode("utf8"), mimetype='application/json',status=status_code)
 
     @staticmethod
     def req(status_code):
@@ -121,12 +148,12 @@ class http:
     @staticmethod
     def not_found(e):
         """ 404 not found"""
-        return http.status({'message':str(e),'status':'404'},404)
+        return http.sortstatus({'message':str(e),'status':'404'},404)
     
     @staticmethod
     def internal_server_error(e):
         """ Internal Server Error """
-        return http.status({'message':str(e),'status':'500'},500)
+        return http.sortstatus({'message':str(e),'status':'500'},500)
 
 class api:
     version = '1'
