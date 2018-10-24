@@ -33,13 +33,14 @@ def anime_search(anime_title='',team_id='',page=1,lang='',episode=''):
         magnet_list = website.magnet(tr_list)
         teamid_list = website.teamid(tr_list)
         teamname_list = website.teamname(tr_list)
-        anime = {}
+        anime = []
         for index in range(len(tr_list)):
-            anime[index] = {}
-            anime[index]['anime_title'] = title_list[index]
-            anime[index]['anime_Fansub_team_id'] = teamid_list[index]
-            anime[index]['anime_Fansub_team_name'] = teamname_list[index]
-            anime[index]['download_magnet'] = magnet_list[index]
+            animedict = {}
+            animedict['anime_title'] = title_list[index]
+            animedict['anime_Fansub_team_id'] = teamid_list[index]
+            animedict['anime_Fansub_team_name'] = teamname_list[index]
+            animedict['download_magnet'] = magnet_list[index]
+            anime.append(animedict)
         return http.status(anime, 200)
     except TypeError as e:
         log.write(str(e))
@@ -67,13 +68,14 @@ def anime_detail(anime_title='',team_id='',page=1,lang='',episode=''):
         magnet_list = website.magnet(tr_list)
         teamid_list = website.teamid(tr_list)
         teamname_list = website.teamname(tr_list)
-        anime = {}
+        anime = []
         for index in range(len(tr_list)):
-            anime[index] = {}
-            anime[index]['anime_title'] = title_list[index]
-            anime[index]['anime_Fansub_team_id'] = teamid_list[index]
-            anime[index]['anime_Fansub_team_name'] = teamname_list[index]
-            anime[index]['download_magnet'] = magnet_list[index]
+            animedict = {}
+            animedict['anime_title'] = title_list[index]
+            animedict['anime_Fansub_team_id'] = teamid_list[index]
+            animedict['anime_Fansub_team_name'] = teamname_list[index]
+            animedict['download_magnet'] = magnet_list[index]
+            anime.append(animedict)
         return http.status(anime, 200)
     except TypeError as e:
         log.write(str(e))
