@@ -12,8 +12,10 @@ from config import *
 
 
 class website:
+    """ website class """
     @staticmethod
     def html(url):
+        """ Get html code"""
         try:
             html = requests.get(url=url)
             html.encoding = 'utf-8'
@@ -24,6 +26,7 @@ class website:
     
     @staticmethod
     def tr(url):
+        """ Get tr list """
         try:
             htmlcode = website.html(url)
             tbody = htmlcode.find('tbody')
@@ -35,7 +38,8 @@ class website:
 class dmhy:
     @staticmethod
     def animesearch(keyword=None,team_id=None,page=1,lang=None,episode=None):
-        """
+        """ 
+        v1 defind
         # Search anime from dmhy
         # dmhy.animesearch(keyword=None,team_id=None,page=1,lang=None,ep=None)
         """
@@ -44,18 +48,22 @@ class dmhy:
             return website.tr(f'https://share.dmhy.org/topics/list/page/{page}?keyword={keyword}+{lang}+{episode}&sort_id=2&team_id={team_id}&order=date-desc')
         except Exception as e:
             return log.write(f'>> dmhy.animesearch : {str(e)}')
-    @staticmethod
-    def title(tr_list):
+
+    @staticmethod        
+    def animelist(*args,page=1):
+        """
+        # Get anime list from dmhy\n
+        # dmhy.animelist(*args(keyword),page=1)
+        """
         try:
-            title_list = []
-            for tr in tr_list:
-                title_list.append((tr.find('a',{'target':'_blank'}).text).replace('\n\t\t\t\t',''))
-            return title_list
+            keyword = '+'.join(args)
+            return website.tr(f'https://share.dmhy.org/topics/list/page/{page}?keyword={keyword}&sort_id=2&team_id=0&order=date-desc')
         except Exception as e:
-            log.write(f'>> website.title : {str(e)}')
+            return log.write(f'>> dmhy.animesearch : {str(e)}')
 
     @staticmethod
     def teamname(tr_list):
+        """ v1 defind """
         try:
             teamname_list = []
             for tr in tr_list:
@@ -68,38 +76,73 @@ class dmhy:
             log.write(f'>> website.teamname : {str(e)}')
 
     @staticmethod
-    def teamid(tr_list):
+    def tag(animelist):
+        """ Get anime tag  """
+        try:
+            tag_list = []
+            for anime in animelist:
+                if anime.find('span',{'class':'tag'}) is None:
+                    tag_list.append('Unknow')
+                else:
+                    tag_list.append(anime.find('span',{'class':'tag'}).text.replace('\n','').replace('\t',''))
+            return tag_list
+        except Exception as e:
+            return log.write(f'>> dmhy.tag : {str(e)}')
+    
+    @staticmethod
+    def title(animelist):
+        try:
+            title_list = []
+            for anime in animelist:
+                title_list.append((anime.find('a',{'target':'_blank'}).text).replace('\n','').replace('\t',''))
+            return title_list
+        except Exception as e:
+            log.write(f'>> dmhy.title : {str(e)}')
+    
+    @staticmethod
+    def teamid(animelist):
         try:
             teamid_list = []
-            for tr in tr_list:
-                if re.findall(r'team_id/\d+',str(tr)):
-                    id = (re.findall(r'team_id/\d+',str(tr))[0]).split('/')[1]
+            for anime in animelist:
+                if re.findall(r'team_id/\d+',str(anime)):
+                    id = (re.findall(r'team_id/\d+',str(anime))[0]).split('/')[1]
                 else:
-                    id = ''
+                    id = 'Unknow'
                 teamid_list.append(id)
             return teamid_list
         except Exception as e:
-            log.write(f'>> website.teamid : {str(e)}')
+            log.write(f'>> dmhy.teamid : {str(e)}')
 
     @staticmethod
-    def magnet(tr_list):
+    def magnet(animelist):
         try:
             magnet_list = []
-            for tr in tr_list:
-                magnet_list.append((tr.find('a',{'class':'download-arrow arrow-magnet'})['href']))
+            for anime in animelist:
+                magnet_list.append((anime.find('a',{'class':'download-arrow arrow-magnet'})['href']))
             return magnet_list
         except Exception as e:
-            log.write(f'>> website.magnet : {str(e)}')
+            log.write(f'>> dmhy.magnet : {str(e)}')
 
     @staticmethod
-    def postid(tr_list):
+    def postid(animelist):
         try:
             postid_list = []
-            for tr in tr_list:
-                postid_list.append((re.findall(r'view/\d+',str(tr))[0]).split('/')[1])
+            for anime in animelist:
+                postid_list.append((re.findall(r'view/\d+',str(anime))[0]).split('/')[1])
             return postid_list
         except Exception as e:
-            log.write(f'>> website.postid : {str(e)}')
+            log.write(f'>> dmhy.postid : {str(e)}')
+
+    @staticmethod
+    def filesize(animelist):
+        try:
+            filesize_list = []
+            for anime in animelist:
+                filesize_list.append(re.findall(r'[0-9]+(?:.|)[0-9]+(?:M|G)B',str(anime))[0])
+            return filesize_list
+        except Exception as e:
+            log.write(f'>> dmhy.filesize : {str(e)}')
+
     @staticmethod
     def fansub():
         """
@@ -110,8 +153,8 @@ class dmhy:
             fansubs = []
             for fansub in fansublist:
                 fansubsdict = {}
-                fansubsdict['Fansub'] = fansub.text
-                fansubsdict['ID'] = fansub['value']
+                fansubsdict['fansub'] = fansub.text
+                fansubsdict['id'] = fansub['value']
                 fansubs.append(fansubsdict)
             del fansubs[0]
             return fansubs
@@ -135,7 +178,8 @@ class http:
     def sortstatus(obj, status_code):
         http.req(status_code)
         return make_response(jsonify(obj), status_code)
-    
+        
+    @staticmethod
     def status(obj, status_code):
         http.req(status_code)
         return Response(json.dumps(obj, ensure_ascii=False).encode("utf8"), mimetype='application/json',status=status_code)

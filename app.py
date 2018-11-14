@@ -3,34 +3,34 @@ import re
 
 import aiohttp
 import requests
-from flask import Flask, jsonify, make_response, request
+from flask import Flask, jsonify, make_response, request, send_from_directory, render_template
 
 from modules.mods import *
 
 app = Flask(__name__)
 
-@app.route(f"/v{api.version}")
-def home():
+@app.route(f"/v1")
+def v1home():
     return http.sortstatus({'status': 200, 'message': 'Welcome to dmhy RESTful API.', 'version': '1.0'}, 200)
     #return http.status(anime, 200)
 #/
-@app.route(f'/v{api.version}/list/', defaults={'anime_title': '','page':'1','lang':'tc','episode':'','team_id':''})
-@app.route(f"/v{api.version}/list/<string:anime_title>")
-@app.route(f"/v{api.version}/list/<string:lang>")
-@app.route(f"/v{api.version}/list/p<int:page>")
-@app.route(f"/v{api.version}/list/team<int:team_id>")
+@app.route(f'/v1/list/', defaults={'anime_title': '','page':'1','lang':'tc','episode':'','team_id':''})
+@app.route(f"/v1/list/<string:anime_title>")
+@app.route(f"/v1/list/<string:lang>")
+@app.route(f"/v1/list/p<int:page>")
+@app.route(f"/v1/list/team<int:team_id>")
 
-@app.route(f"/v{api.version}/list/<string:anime_title>/p<int:page>")
-@app.route(f"/v{api.version}/list/<string:anime_title>/<string:lang>")
-@app.route(f"/v{api.version}/list/<string:anime_title>/ep<int:episode>")
-@app.route(f"/v{api.version}/list/<string:anime_title>/team<int:team_id>")
+@app.route(f"/v1/list/<string:anime_title>/p<int:page>")
+@app.route(f"/v1/list/<string:anime_title>/<string:lang>")
+@app.route(f"/v1/list/<string:anime_title>/ep<int:episode>")
+@app.route(f"/v1/list/<string:anime_title>/team<int:team_id>")
 
-@app.route(f"/v{api.version}/list/<string:anime_title>/<string:lang>/p<int:page>")
-@app.route(f"/v{api.version}/list/<string:anime_title>/<string:lang>/ep<int:episode>")
-@app.route(f"/v{api.version}/list/<string:anime_title>/<string:lang>/team<int:team_id>")
+@app.route(f"/v1/list/<string:anime_title>/<string:lang>/p<int:page>")
+@app.route(f"/v1/list/<string:anime_title>/<string:lang>/ep<int:episode>")
+@app.route(f"/v1/list/<string:anime_title>/<string:lang>/team<int:team_id>")
 
-@app.route(f"/v{api.version}/list/<string:lang>/p<int:page>")
-@app.route(f"/v{api.version}/list/<string:lang>/team<int:team_id>")
+@app.route(f"/v1/list/<string:lang>/p<int:page>")
+@app.route(f"/v1/list/<string:lang>/team<int:team_id>")
 
 def anime_search(anime_title='', team_id='', page=1, lang='', episode=''):
     """ search anime """
@@ -65,7 +65,7 @@ def anime_search(anime_title='', team_id='', page=1, lang='', episode=''):
         log.write(str(e))
         return http.internal_server_error(str(e))
 
-@app.route(f"/v{api.version}/fansubs")
+@app.route(f"/v1/fansubs")
 def fansub():
     try:
         return http.status(dmhy.fansub(),200)
@@ -73,13 +73,51 @@ def fansub():
         log.write(f'>> app.fansub : {str(e)}')
         return http.internal_server_error(str(e))
 
-@app.route(f"/v{api.version}/test")
-def test():
-    try:
-        return http.status(['sdada','abbb','caas'],200)
-    except Exception as e:
-        log.write(f'>> app.fansub : {str(e)}')
-        return http.internal_server_error(str(e))
+@app.route(f'/v2')
+def v2home():
+    return http.status({'message': 'Welcome to dmhy RESTful API.', 'version': '2.0','documentation':'','status': 200}, 200)
+
+@app.route(f'/v2/list',defaults={'keyword': ''})
+@app.route(f'/v2/list/<string:keyword>')
+def animelist(keyword):
+    anime_list  = dmhy.animelist(keyword)
+    title_list  = dmhy.title(anime_list)
+    tag_list    = dmhy.tag(anime_list)
+    magnet_list = dmhy.magnet(anime_list)
+    size_lsit   = dmhy.filesize(anime_list)
+    postid_list = dmhy.postid(anime_list)
+    anime = []
+    for index in range(len(anime_list)):
+        animedict = {}
+        animedict['tag']    = tag_list[index]
+        animedict['postid'] = postid_list[index]
+        animedict['title']  = title_list[index]
+        animedict['size']   = size_lsit[index]
+        animedict['magnet'] = magnet_list[index]
+        animedict['download'] = f'https://{config.hostname}/v2/get?keyword={keyword}&postid={postid_list[index]}'
+        anime.append(animedict)
+    return http.status(anime, 200)
+
+@app.route(f'/v2/get',defaults={'keyword':'','postid':''})
+@app.route(f'/v2/get?keyword=<string:keyword>&postid=<string:postid>')
+def getmagnet(keyword,postid):
+    keyword = request.args.get('keyword')
+    postid = request.args.get('postid')
+    if keyword is None or postid is None:
+        return http.not_found('miss keyword or postid')
+    anime_list   = dmhy.animelist(keyword)
+    postid_list  = dmhy.postid(anime_list)
+    if postid_list.index(postid) is not None:
+        animedict = {}
+        animedict['title']  = dmhy.title(anime_list)[postid_list.index(postid)]
+        animedict['tag']    = dmhy.tag(anime_list)[postid_list.index(postid)]
+        animedict['magnet'] = dmhy.magnet(anime_list)[postid_list.index(postid)]
+        animedict['size']   = dmhy.filesize(anime_list)[postid_list.index(postid)]
+    return render_template('index.html',title=animedict['title'],magnet=animedict['magnet'])
+
+@app.route(f'/v2/fansub')
+def fansublist():
+    return http.status(dmhy.fansub(), 200)
 
 @app.errorhandler(404)
 def _not_found(e):
