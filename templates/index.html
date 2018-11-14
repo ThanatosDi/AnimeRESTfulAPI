@@ -9,6 +9,13 @@
 		<title>{{ title }}</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
 		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/main.css') }}" />
 		<noscript><link rel="stylesheet" href="{{ url_for('static', filename='assets/css/noscript.css') }}" /></noscript>
 	</head>
@@ -22,16 +29,55 @@
 						<header>
 							<span class="avatar"><img src="{{ url_for('static', filename='images/download.png') }}" alt="" /></span>
 							<h2>{{ title }}</h2>
-							<p><textarea style="resize:none;width:100%;height:200px;" id="magnet" onfocus="this.select()" onmouseover="this.focus();">{{ magnet }}</textarea></p>
-							<p><a href="javascript:void(0)" class="button" onclick="CopyTextToClipboard('magnet')" >複製Magnet</a> <a href="{{ magnet }}" class="button">開啟</a></p>
+							<p>
+								<a class="button" data-toggle="collapse" href="#DetailCollapse" role="button" aria-expanded="false" aria-controls="DetailCollapse">詳細資料</a>
+								<a class="button" data-toggle="collapse" href="#MagnetCollapse" role="button" aria-expanded="false" aria-controls="MagnetCollapse">磁力連結</a>
+							</p>
+							
+							<div class="row">
+								<div class="col-12">
+									<div class="collapse multi-collapse" id="DetailCollapse">
+										<div class="card card-body">
+											<table class="table table-hover">
+												<tbody>
+											 	    <tr>
+														<th scope="row">檔案名稱：</th>
+														<td>{{title}}</td>
+													</tr>
+													<tr>
+														<th scope="row">檔案大小：</th>
+														<td>{{filesize}}</td>
+													</tr>
+													<tr>
+														<th scope="row">字幕組：</th>
+														<td>{{tag}}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-12">
+									<div class="collapse multi-collapse" id="MagnetCollapse">
+										<div class="card card-body">
+												<textarea style="resize:none;width:100%;height:200px;" id="magnet" onfocus="this.select()" onmouseover="this.focus();">{{ magnet }}</textarea>
+												<hr/>
+												<p><a href="javascript:void(0)" class="button" onclick="CopyTextToClipboard('magnet')" >複製Magnet</a> <a href="{{ magnet }}" class="button">開啟</a></p>
+										</div>
+									</div>
+								</div>
+							</div>
 						</header>
-						<footer>
+
+						<!--<footer>
 							<ul class="icons">
 								<li><a href="#" class="fa-twitter">Twitter</a></li>
 								<li><a href="#" class="fa-instagram">Instagram</a></li>
 								<li><a href="#" class="fa-facebook">Facebook</a></li>
 							</ul>
-						</footer>
+						</footer>-->
 					</section>
 
 				<!-- Footer -->

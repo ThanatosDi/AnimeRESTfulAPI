@@ -113,7 +113,7 @@ def getmagnet(keyword,postid):
         animedict['tag']    = dmhy.tag(anime_list)[postid_list.index(postid)]
         animedict['magnet'] = dmhy.magnet(anime_list)[postid_list.index(postid)]
         animedict['size']   = dmhy.filesize(anime_list)[postid_list.index(postid)]
-    return render_template('index.html',title=animedict['title'],magnet=animedict['magnet'])
+    return render_template('index.html',title=animedict['title'],magnet=animedict['magnet'],filesize=animedict['size'],tag=animedict['tag'])
 
 @app.route(f'/v2/fansub')
 def fansublist():
