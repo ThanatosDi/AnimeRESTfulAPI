@@ -62,6 +62,9 @@
 								<div class="col-12">
 									<div class="collapse multi-collapse" id="MagnetCollapse">
 										<div class="card card-body">
+												<div class="alert alert-primary" role="alert">
+													當開啟磁連無法正確添加任務時請手動複製磁連並手動添加任務
+												</div>
 												<textarea style="resize:none;width:100%;height:200px;" id="magnet" onfocus="this.select()" onmouseover="this.focus();">{{ magnet }}</textarea>
 												<hr/>
 												<p><a href="javascript:void(0)" class="button" onclick="CopyTextToClipboard('magnet')" >複製Magnet</a> <a href="{{ magnet }}" class="button">開啟</a></p>
