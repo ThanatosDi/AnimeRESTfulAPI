@@ -73,7 +73,28 @@ class dmhy:
                     teamname_list.append('')
             return teamname_list
         except Exception as e:
-            log.write(f'>> website.teamname : {str(e)}')
+            log.write(f'>> dmhy.teamname : {str(e)}')
+
+    @staticmethod
+    def lang(title):
+        """ return anime sub language """
+        try:
+            list_filed = re.sub(r'(?:\[|\【|\]|\】)',' ',title).split(' ')
+            while '' in list_filed:
+                list_filed.remove('')
+            lang = re.findall(r'(?:BIG5|GB|繁體|简体|繁中|简中|繁\/日|繁日|简日|简繁日|简繁)',' '.join(list_filed))
+            if any(lang):
+                lang = lang[0].upper()
+                if lang.find('BIG5')==0:
+                    lang = '繁體'
+                if lang.find('GB')==0:
+                    lang = '簡體'
+            else:
+                lang = '未知'
+            lang =  lang.replace('简','簡').replace('体','體')
+            return lang
+        except Exception as e:
+            log.write(f'>> dmhy.teamname : {str(e)}')
 
     @staticmethod
     def tag(animelist):
