@@ -30,8 +30,8 @@
 							<span class="avatar"><img src="{{ url_for('static', filename='images/download.png') }}" alt="" /></span>
 							<h2>{{ title }}</h2>
 							<p>
-								<a class="button" data-toggle="collapse" href="#DetailCollapse" role="button" aria-expanded="false" aria-controls="DetailCollapse">詳細資料</a>
-								<a class="button" data-toggle="collapse" href="#MagnetCollapse" role="button" aria-expanded="false" aria-controls="MagnetCollapse">磁力連結</a>
+								<a class="button" data-toggle="collapse" href="#DetailCollapse" role="button" aria-expanded="false" aria-controls="DetailCollapse"><i class="fa fa-list fa-lg"></i>詳細資料</a>
+								<a class="button" data-toggle="collapse" href="#MagnetCollapse" role="button" aria-expanded="false" aria-controls="MagnetCollapse"><i class="fa fa-magnet fa-lg"></i>磁力連結</a>
 							</p>
 							
 							<div class="row">
@@ -71,7 +71,7 @@
 												</div>
 												<textarea style="resize:none;width:100%;height:200px;" id="magnet" onfocus="this.select()" onmouseover="this.focus();">{{ magnet }}</textarea>
 												<hr/>
-												<p><a href="javascript:void(0)" class="button" onclick="CopyTextToClipboard('magnet')" >複製Magnet</a> <a href="{{ magnet }}" class="button">開啟</a></p>
+												<p><a href="javascript:void(0)" class="button" onclick="CopyTextToClipboard('magnet')" ><i class="fa fa-copy fa-lg"></i>複製Magnet</a> <a href="{{ magnet }}" class="button"><i class="fa fa-download fa-lg"></i>開啟</a></p>
 										</div>
 									</div>
 								</div>
