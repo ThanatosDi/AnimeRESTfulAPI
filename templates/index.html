@@ -72,6 +72,7 @@
 												<textarea style="resize:none;width:100%;height:200px;" id="magnet" onfocus="this.select()" onmouseover="this.focus();">{{ magnet }}</textarea>
 												<hr/>
 												<p><a href="javascript:void(0)" class="button" onclick="CopyTextToClipboard('magnet')" ><i class="fa fa-copy fa-lg"></i>複製Magnet</a> <a href="{{ magnet }}" class="button"><i class="fa fa-download fa-lg"></i>開啟</a></p>
+												<p><a href="{{ magnet_1 }}" class="button"><i class="fa fa-magnet fa-lg"></i>備用磁連 I </a> <a href="{{ magnet_2 }}" class="button"><i class="fa fa-magnet fa-lg"></i>備用磁連 II </a></p>
 										</div>
 									</div>
 								</div>
@@ -90,7 +91,7 @@
 				<!-- Footer -->
 					<footer id="footer">
 						<ul class="copyright">
-							<li>&copy; Jane Doe</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+							<li>&copy; Jane Doe</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li><li>花費 {{time}} s 載入</li>
 						</ul>
 					</footer>
 

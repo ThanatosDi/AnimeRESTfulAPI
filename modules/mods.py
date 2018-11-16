@@ -155,6 +155,16 @@ class dmhy:
             log.write(f'>> dmhy.postid : {str(e)}')
 
     @staticmethod
+    def posturl(animelist):
+        try:
+            posturl_list = []
+            for anime in animelist:
+                posturl_list.append(re.findall(r'view/\d+[\S]+\"',str(anime))[0].replace('"','').split('/')[1])
+            return posturl_list
+        except Exception as e:
+            log.write(f'>> dmhy.postid : {str(e)}')
+
+    @staticmethod
     def filesize(animelist):
         try:
             filesize_list = []
@@ -163,6 +173,17 @@ class dmhy:
             return filesize_list
         except Exception as e:
             log.write(f'>> dmhy.filesize : {str(e)}')
+    
+    @staticmethod
+    def magnet_in_post(posturl):
+        try:
+            url = f'https://share.dmhy.org/topics/view/{posturl}'
+            html = website.html(url)
+            a_list = re.findall(r'href=\"magnet:\?xt=urn:btih:[\S]+\"',str(html))
+            a_list = [a.replace('href=','').replace('"','') for a in a_list]
+            return a_list
+        except Exception as e:
+            log.write(f'>> dmhy.title_in_post : {str(e)}')
 
     @staticmethod
     def fansub():
