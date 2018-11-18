@@ -155,6 +155,16 @@ class dmhy:
             log.write(f'>> dmhy.postid : {str(e)}')
 
     @staticmethod
+    def posturl(animelist):
+        try:
+            posturl_list = []
+            for anime in animelist:
+                posturl_list.append(re.findall(r'view/\d+[\S]+\"',str(anime))[0].replace('"','').split('/')[1])
+            return posturl_list
+        except Exception as e:
+            log.write(f'>> dmhy.postid : {str(e)}')
+
+    @staticmethod
     def filesize(animelist):
         try:
             filesize_list = []
@@ -163,6 +173,17 @@ class dmhy:
             return filesize_list
         except Exception as e:
             log.write(f'>> dmhy.filesize : {str(e)}')
+    
+    @staticmethod
+    def magnet_in_post(posturl):
+        try:
+            url = f'https://share.dmhy.org/topics/view/{posturl}'
+            html = website.html(url)
+            a_list = re.findall(r'href=\"magnet:\?xt=urn:btih:[\S]+\"',str(html))
+            a_list = [a.replace('href=','').replace('"','') for a in a_list]
+            return a_list
+        except Exception as e:
+            log.write(f'>> dmhy.title_in_post : {str(e)}')
 
     @staticmethod
     def fansub():
@@ -181,6 +202,57 @@ class dmhy:
             return fansubs
         except Exception as e:
             log.write(f'>> dmhy.fansub : {str(e)}')
+
+    @staticmethod
+    def tracker():
+        """
+        # show all tracker
+        """
+        try:
+            tracker = {
+                '動漫花園':[
+                    'udp://104.238.198.186:8000/announce',
+                    'http://104.238.198.186:8000/announce',
+                    'http://t.nyaatracker.com/announce',
+                    'http://opentracker.acgnx.se/announce',
+                    'https://opentracker.acgnx.se/announce',
+                    'http://opentracker.acgnx.com:6869/announce',
+                    'http://tracker.xfsub.com:6868/announce',
+                    'http://tracker.dm258.cn:7070/announce'
+                ],
+                'AxgnX末日動漫資源庫':[
+                    'http://opentracker.acgnx.se/announce',
+                    'https://opentracker.acgnx.se/announce',
+                    'http://opentracker.acgnx.com:6869/announce'
+                ],
+                'ACG.RIP':[
+                    'http://t.acg.rip:6699/announce',
+                    'http://share.camoe.cn:8080/announce'
+                ],
+                '萌番組':[
+                    'udp://tr.bangumi.moe:6969/announce',
+                    'https://tr.bangumi.moe:9696/announce',
+                    'http://tr.bangumi.moe:6969/announce'
+                ],
+                '旋風動漫':[
+                    'http://tracker.xfsub.com:6868/announce',
+                    'http://tracker.dm258.cn:7070/announce'
+                ],
+                'Nyaa.si':[
+                    'http://nyaa.tracker.wf:7777/announce'
+                ],
+                'Nyaa Pantsu':[
+                    'udp://tracker.doko.moe:6969'
+                ],
+                'AcgnX Torrent Global':[
+                    'http://tracker.acgnx.se/announce',
+                    'https://tracker.acgnx.se/announce',
+                    'udp://tracker.acgnx.se/announce'
+                ]
+            }
+            return tracker
+        except Exception as e:
+            log.write(f'>> dmhy.tracker : {str(e)}')
 
 
 class log:

@@ -1,9 +1,11 @@
 import asyncio
 import re
+import time
 
 import aiohttp
 import requests
-from flask import Flask, jsonify, make_response, request, send_from_directory, render_template
+from flask import (Flask, jsonify, make_response, render_template, request,
+                   send_from_directory)
 
 from modules.mods import *
 
@@ -86,6 +88,7 @@ def animelist(keyword):
     magnet_list = dmhy.magnet(anime_list)
     size_lsit   = dmhy.filesize(anime_list)
     postid_list = dmhy.postid(anime_list)
+    posturl_list = dmhy.posturl(anime_list)
     anime = []
     for index in range(len(anime_list)):
         animedict = {}
@@ -94,6 +97,7 @@ def animelist(keyword):
         animedict['title']  = title_list[index]
         animedict['size']   = size_lsit[index]
         animedict['lang']   = dmhy.lang(title_list[index])
+        animedict['url']    = posturl_list[index]
         animedict['magnet'] = magnet_list[index]
         animedict['download'] = f'https://{config.hostname}/v2/get?keyword={keyword}&postid={postid_list[index]}'
         anime.append(animedict)
@@ -102,6 +106,7 @@ def animelist(keyword):
 @app.route(f'/v2/get',defaults={'keyword':'','postid':''})
 @app.route(f'/v2/get?keyword=<string:keyword>&postid=<string:postid>')
 def getmagnet(keyword,postid):
+    start = time.time()
     keyword = request.args.get('keyword')
     postid = request.args.get('postid')
     if keyword is None or postid is None:
@@ -109,17 +114,39 @@ def getmagnet(keyword,postid):
     anime_list   = dmhy.animelist(keyword)
     postid_list  = dmhy.postid(anime_list)
     if postid_list.index(postid) is not None:
+        resp = requests.get(f'http://127.0.0.1:7000/v2/list/{keyword}')
+        if resp.status_code!=200:
+            return http.not_found('404 not found')
+        animelist = json.loads(resp.text)
+        anime = animelist[postid_list.index(postid)]
         animedict = {}
-        animedict['title']  = dmhy.title(anime_list)[postid_list.index(postid)]
-        animedict['tag']    = dmhy.tag(anime_list)[postid_list.index(postid)]
-        animedict['magnet'] = dmhy.magnet(anime_list)[postid_list.index(postid)]
-        animedict['size']   = dmhy.filesize(anime_list)[postid_list.index(postid)]
-        animedict['lang']   = dmhy.lang(animedict['title'])
-    return render_template('index.html',title=animedict['title'],magnet=animedict['magnet'],filesize=animedict['size'],tag=animedict['tag'],lang=animedict['lang'])
+        animedict['title']  = anime['title']
+        animedict['tag']    = anime['tag']
+        animedict['magnet'] = anime['magnet']
+        animedict['magnet_1'] = dmhy.magnet_in_post(anime['url'])[0]
+        animedict['magnet_2'] = dmhy.magnet_in_post(anime['url'])[1]
+        animedict['filesize']   = anime['size']
+        animedict['lang']   = anime['lang']
+    end = time.time()
+    animedict['time']  = "{:.2f}".format(end-start)
+    return render_template('index.html',**animedict)
 
 @app.route(f'/v2/fansub')
 def fansublist():
     return http.status(dmhy.fansub(), 200)
+
+@app.route(f'/v2/tracker',defaults={'type':''})
+@app.route(f'/v2/tracker?format=<string:type>')
+def trackerlist(type):
+    format_list = ['json','list']
+    trackers = dmhy.tracker()
+    format_ = request.args.get('format')
+    if format_=='list':
+        tracker = ''
+        for values in list(trackers.values()):
+            tracker +='<br/><br/>'.join(values)+'<br/><br/>'
+        return tracker
+    return http.status(trackers,200)
 
 @app.errorhandler(404)
 def _not_found(e):
