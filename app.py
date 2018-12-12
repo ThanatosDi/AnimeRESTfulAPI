@@ -158,6 +158,11 @@ def _internal_server_error(e):
     """ Internal Server Error """
     return http.internal_server_error('Server Error')
 
+@app.after_request
+def add_header(response):
+    response.cache_control.public = True
+    response.cache_control.max_age = 300
+    return response
 
 if __name__ == "__main__":
     app.run(port=7000)
