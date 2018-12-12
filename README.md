@@ -6,6 +6,9 @@
 $ python -m pip insatll -r requirements.txt
 ```
 ## 使用
+ [V1](https://github.com/ThanatosDi/dmhy-RESTfulAPI/blob/master/README.md#v1)  
+ [V2](https://github.com/ThanatosDi/dmhy-RESTfulAPI/blob/master/README.md#v2)
+ ## v1
   - ### GET /v1
        - 首頁，顯示API相關資訊
   - ### GET /v1/list/
@@ -123,5 +126,10 @@ $ python -m pip insatll -r requirements.txt
        |fansub ID        |字幕組ID           |int  | 117   |
   - ### GET /v1/fansubs
        - 回傳全部字幕組 ID
-       
-       
+## v2    
+  - ### GET /v2
+       - 首頁，顯示API相關資訊
+  - ### GET /v2/list
+       - 動漫花園首頁動畫列表
+  - ### GET /v2/list/{keyword}
+       - 執行搜索功能，每個關鍵字之間用空白隔開或使用+相連，關鍵字越詳細回傳的資料越符合所需
